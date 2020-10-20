@@ -9,16 +9,52 @@
     xmlns:local="using:MUXControlsTestApp"
     xmlns:Windows10FallCreatorsUpdate="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 5)"
     mc:Ignorable="d">
-
+    <Page.Resources>
+        <Style x:Key="TransparentStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <ContentPresenter Content="{TemplateBinding Content}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        
+       
 
         <StackPanel BorderBrush="Black" BorderThickness="2" Grid.Column="0" VerticalAlignment="Center" Padding="20">
+            <StackPanel Orientation="Horizontal" Spacing="2">
 
-            <muxc:PagerControl x:Name="TestPager" AutomationProperties.Name="TestPager" SelectedIndexChanged="OnSelectedIndexChanged" NumberOfPages="5"/>
+                <Button Content="&#xEA3A;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0"
+                         Margin="4, 0, 0, 0"/>
+
+                <Button Content="&#xEA3B;" FontFamily="Segoe MDL2 Assets" Background="Transparent" BorderThickness="0"
+                        Margin="4, 0, 0, 0"/>
+
+
+
+                <AppBarButton Content="click me">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEA3A;"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton Content="click me">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEA3B;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+            </StackPanel>
+            <muxc:PagerControl x:Name="TestPager" AutomationProperties.Name="TestPager"
+                               NumberOfPages="10" DisplayMode="VerticalPips"
+                               FirstButtonVisibility="Visible"/>
             <muxc:PagerControl x:Name="CustomizedPager" NumberOfPages="5" Margin="0,50,0,0">
                 <muxc:PagerControl.FirstButtonStyle>
                     <Style TargetType="Button">
@@ -112,13 +148,14 @@
                         <ComboBoxItem x:Name="NumberBoxDisplayModeItem" AutomationProperties.Name="NumberBoxDisplayModeItem">NumberBox</ComboBoxItem>
                         <ComboBoxItem x:Name="ComboBoxDisplayModeItem" AutomationProperties.Name="ComboBoxDisplayModeItem">ComboBox</ComboBoxItem>
                         <ComboBoxItem x:Name="NumberPanelDisplayModeItem" AutomationProperties.Name="NumberPanelDisplayModeItem">NumberPanel</ComboBoxItem>
+                        <ComboBoxItem x:Name="VerticalPipsDisplayModeItem" AutomationProperties.Name="VerticalPipsDisplayModeItem">VerticalPips</ComboBoxItem>
                     </ComboBox>
                     <CheckBox Content="ButtonPanelAlwaysShowFirstLastPageIndex" Grid.Row="4" IsChecked="{x:Bind TestPager.ButtonPanelAlwaysShowFirstLastPageIndex,Mode=TwoWay}"/>
                     <StackPanel Grid.Row="5" >
                         <Button x:Name="NumberOfPagesSetterButton" Content="Set NumberOfPages to 100" Click="NumberOfPagesSetterButtonClicked"/>
                         <Button x:Name="NumberOfPagesInfinityButton" AutomationProperties.Name="NumberOfPagesInfinityButton" Content="Set NumberOfPages to -1 (aka Infinity mode)" Click="NumberOfPagesInfinityButtonClicked"/>
                         <Button x:Name="IncreaseNumberOfPagesButton" Content="Increase NumberOfPages by 1" Click="IncreaseNumberOfPagesButtonClicked"/>
-                        
+
                     </StackPanel>
                 </Grid>
                 <Grid Grid.Column="1" Margin="5">

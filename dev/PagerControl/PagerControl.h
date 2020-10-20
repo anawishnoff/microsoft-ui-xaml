@@ -45,6 +45,15 @@ private:
     /* Eventing */
     void RaiseSelectedIndexChanged();
 
+    /* VerticalPips logic */
+    void UpdateVerticalPips(const int numberOfPages);
+    void AppendButtonToVerticalPipsList(const int pipIndex, const int numberOfPages, const int selectedPipIndex);
+    void MovePipIdentifierToElement(int index);
+    int getSelectedPipIndexBasedOnPageIndex(int index);
+    winrt::Style getPipStyleBasedOnOffset(int offset);
+    int m_lastSelectedPipIndex = -1;
+    int m_maxNumberOfPips = 5;
+
     /* NumberPanel logic */
     void UpdateNumberPanel(const int numberOfPages);
     void UpdateNumberOfPanelCollectionInfiniteItems();
@@ -81,9 +90,15 @@ private:
     winrt::Button::Click_revoker m_previousPageButtonClickRevoker{};
     winrt::Button::Click_revoker m_nextPageButtonClickRevoker{};
     winrt::Button::Click_revoker m_lastPageButtonClickRevoker{};
+    // Vertical Pips revokers
+    winrt::Button::Click_revoker m_firstPagePipButtonClickRevoker{};
+    winrt::Button::Click_revoker m_previousPagePipButtonClickRevoker{};
+    winrt::Button::Click_revoker m_nextPagePipButtonClickRevoker{};
+    winrt::Button::Click_revoker m_lastPagePipButtonClickRevoker{};
 
     winrt::IObservableVector<IInspectable> m_comboBoxEntries{};
     winrt::IObservableVector<IInspectable> m_numberPanelElements{};
+    winrt::IObservableVector<IInspectable> m_verticalPipsElements{};
 
 };
 

@@ -8,6 +8,7 @@ enum PagerControlDisplayMode
     ComboBox,
     NumberBox,
     ButtonPanel,
+    VerticalPips,
 };
 
 [WUXC_VERSION_PREVIEW]
@@ -36,6 +37,7 @@ unsealed runtimeclass PagerControlTemplateSettings : Windows.UI.Xaml.DependencyO
 
     Windows.Foundation.Collections.IVector<Object> Pages{ get; };
     Windows.Foundation.Collections.IVector<Object> NumberPanelItems { get; };
+    Windows.Foundation.Collections.IVector<Object> VerticalPipsItems { get; };
 }
 
 [WUXC_VERSION_PREVIEW]
