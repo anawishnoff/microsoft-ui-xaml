@@ -24,15 +24,17 @@ namespace Windows.UI.Xaml.Tests.MUXControls.InteractionTests
     public class PagerControlTestBase
     {
         protected PagerControlTestPageElements elements;
-        protected int previousPage = -1;
         protected int AutoDisplayModeThresholdValue = 10;
         protected delegate void SetButtonVisibilityModeFunction(ButtonVisibilityModes mode);
 
         protected void SelectValueInPagerComboBox(int index)
         {
+            // Open ComboBox.
             InputHelper.LeftClick(elements.GetPagerComboBox());
-            InputHelper.LeftClick(elements.GetPagerComboBox().Children[index]);
             Wait.ForIdle();
+            // Index is the actual PagerControl SelectedIndex, so we need to add 1 here 
+            // to result in the user friendly name being displayed in the ComboBox.
+            elements.GetPagerComboBox().SelectItemByName((index + 1).ToString());
         }
 
         protected void SendValueToNumberBox(string value)
@@ -118,9 +120,7 @@ namespace Windows.UI.Xaml.Tests.MUXControls.InteractionTests
         protected void VerifyPageChanged(int expectedPage)
         {
             Verify.AreEqual(expectedPage, GetCurrentPageAsInt());
-            Verify.AreEqual(previousPage, GetPreviousPageAsInt());
-            Log.Comment($"Changing to page {expectedPage} from {previousPage}");
-            previousPage = expectedPage;
+            Log.Comment($"Changing to page {expectedPage}");
         }
 
         protected void VerifyButton(UIObject button, Visibility expectedVisibility, bool shouldBeEnabled)
@@ -275,6 +275,7 @@ namespace Windows.UI.Xaml.Tests.MUXControls.InteractionTests
         protected void SetDisplayMode(string mode)
         {
             elements.GetDisplayModeComboBox().SelectItemByName(mode);
+            Wait.ForIdle();
         }
 
         protected void VerifyAutoDisplayMode()
@@ -431,7 +432,7 @@ namespace Windows.UI.Xaml.Tests.MUXControls.InteractionTests
                     SetButtonVisibilityMode(visMode);
                     GetLastPage();
                     // If we're not on the first page then navigate to the first page.
-                    if (previousPage != 0)
+                    if (GetCurrentPageAsInt() != 0)
                     {
                         SelectValueInPagerComboBox(0);
                         VerifyPageChanged(0);
