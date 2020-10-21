@@ -192,7 +192,7 @@
                                     Content="&#xE76B;"/>
                         </StackPanel>
                       <!-- Buttons for VerticalPips display !-->
-                     <StackPanel Grid.Column="1" Orientation="Vertical">
+                 <!--    <StackPanel Grid.Column="1" Orientation="Vertical">
                             <Button x:Name="FirstPagePipButton"
                                     ToolTipService.ToolTip="{Binding ElementName=FirstPagePipButton, Path=(AutomationProperties.Name)}"
                                     Style="{TemplateBinding FirstButtonStyle}"
@@ -210,7 +210,7 @@
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                     Content="&#xE70E;"
                                     Visibility="Collapsed"/>
-                        </StackPanel>
+                        </StackPanel> -->
                         
 
 
@@ -275,7 +275,7 @@
                         </StackPanel>
 
                         <!-- Buttons for VerticalPips display -->
-                        <StackPanel Orientation="Vertical"  Grid.Column="1" Grid.Row="2">
+                      <!--  <StackPanel Orientation="Vertical"  Grid.Column="1" Grid.Row="2">
                             <Button x:Name="NextPagePipButton"
                                 ToolTipService.ToolTip="{Binding ElementName=NextPagePipButton, Path=(AutomationProperties.Name)}"
                                 Style="{TemplateBinding NextButtonStyle}"
@@ -291,9 +291,9 @@
                                 Visibility="Collapsed">
                                 <Button.RenderTransform>
                                     <RotateTransform Angle="90"/>
-                                </Button.RenderTransform>
+                                </Button.RenderTransform> 
                             </Button>
-                        </StackPanel>
+                        </StackPanel> -->
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
