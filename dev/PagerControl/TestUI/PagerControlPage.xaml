@@ -52,9 +52,16 @@
                     </AppBarButton.Icon>
                 </AppBarButton>
             </StackPanel>
+
+
+            
             <muxc:PagerControl x:Name="TestPager" AutomationProperties.Name="TestPager"
-                               NumberOfPages="10" DisplayMode="VerticalPips"
+                               NumberOfPages="3" DisplayMode="ButtonPanel"
                                FirstButtonVisibility="Visible"/>
+
+
+
+            
             <muxc:PagerControl x:Name="CustomizedPager" NumberOfPages="5" Margin="0,50,0,0">
                 <muxc:PagerControl.FirstButtonStyle>
                     <Style TargetType="Button">

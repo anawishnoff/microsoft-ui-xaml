@@ -47,7 +47,6 @@
                                 <VisualState x:Name="FirstPageButtonDisabled">
                                     <VisualState.Setters>
                                         <Setter Target="FirstPageButton.IsEnabled" Value="False"/>
-                                        <Setter Target="FirstPagePipButton.IsEnabled" Value="False"/>
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -70,7 +69,6 @@
                                 <VisualState x:Name="PreviousPageButtonDisabled">
                                     <VisualState.Setters>
                                         <Setter Target="PreviousPageButton.IsEnabled" Value="False"/>
-                                        <Setter Target="PreviousPagePipButton.IsEnabled" Value="False"/>
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -87,7 +85,6 @@
                                 <VisualState x:Name="NextPageButtonDisabled">
                                     <VisualState.Setters>
                                         <Setter Target="NextPageButton.IsEnabled" Value="False"/>
-                                        <Setter Target="NextPagePipButton.IsEnabled" Value="False"/>
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="NextPageButtonHidden">
@@ -110,7 +107,6 @@
                                 <VisualState x:Name="LastPageButtonDisabled">
                                     <VisualState.Setters>
                                         <Setter Target="LastPageButton.IsEnabled" Value="False"/>
-                                        <Setter Target="LastPagePipButton.IsEnabled" Value="False"/>
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="LastPageButtonHidden">
@@ -148,20 +144,39 @@
                                 </VisualState>
                                 <VisualState x:Name="VerticalPipsVisible">
                                     <VisualState.Setters>
-                                        <Setter Target="BoxPanels.Visibility" Value="Collapsed"/>
-                                        <Setter Target="NumberBoxDisplay.Visibility" Value="Collapsed"/>
-                                        <Setter Target="ComboBoxDisplay.Visibility" Value="Collapsed"/>
-                                        <Setter Target="NumberPanelItemsRepeater.Visibility" Value="Collapsed"/>
-                                        <Setter Target="NumberPanelCurrentPageIndicator.Visibility" Value="Collapsed"/>
-                                        <Setter Target="FirstPageButton.Visibility" Value="Collapsed"/>
-                                        <Setter Target="PreviousPageButton.Visibility" Value="Collapsed"/>
-                                        <Setter Target="LastPageButton.Visibility" Value="Collapsed"/>
-                                        <Setter Target="NextPageButton.Visibility" Value="Collapsed"/>
                                         <Setter Target="VerticalPipsItemsRepeater.Visibility" Value="Visible"/>
-                                        <Setter Target="FirstPagePipButton.Visibility" Value="Visible"/>
-                                        <Setter Target="PreviousPagePipButton.Visibility" Value="Visible"/>
-                                        <Setter Target="LastPagePipButton.Visibility" Value="Visible"/>
-                                        <Setter Target="NextPagePipButton.Visibility" Value="Visible"/>
+                                        <Setter Target="FirstPageButton.RenderTransformOrigin" Value="0.5, 0.5"/>
+                                        <Setter Target="PreviousPageButton.RenderTransformOrigin" Value="0.5, 0.5"/>
+                                        <Setter Target="NextPageButton.RenderTransformOrigin" Value="0.5, 0.5"/>
+                                        <Setter Target="LastPageButton.RenderTransformOrigin" Value="0.5, 0.5"/>
+                                        <Setter Target="FirstPageButton.RenderTransform">
+                                            <Setter.Value>
+                                                <RotateTransform Angle="90"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Target="PreviousPageButton.RenderTransform">
+                                            <Setter.Value>
+                                                <RotateTransform Angle="90"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Target="NextPageButton.RenderTransform">
+                                            <Setter.Value>
+                                                <RotateTransform Angle="90"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Target="LastPageButton.RenderTransform">
+                                            <Setter.Value>
+                                                <RotateTransform Angle="90"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        
+                                        <Setter Target="FirstAndPreviousButtonPanel.Orientation" Value="Vertical"/>
+                                        <Setter Target="FirstAndPreviousButtonPanel.HorizontalAlignment" Value="Center"/>
+                                        <Setter Target="LastAndNextButtonPanel.Orientation" Value="Vertical"/>
+                                        <Setter Target="LastAndNextButtonPanel.HorizontalAlignment" Value="Center"/>
+                                       <Setter Target="FirstAndPreviousButtonPanel.(Grid.Column)" Value="1"/>
+                                        <Setter Target="LastAndNextButtonPanel.(Grid.Column)" Value="1"/>
+                                        <Setter Target="LastAndNextButtonPanel.(Grid.Row)" Value="2"/>
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -179,7 +194,7 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <!-- Buttons for ComboBox, ButtonPanel, NumberBox displays !-->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel x:Name="FirstAndPreviousButtonPanel" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button x:Name="FirstPageButton"
                                     ToolTipService.ToolTip="{Binding ElementName=FirstPageButton, Path=(AutomationProperties.Name)}"
                                     Style="{TemplateBinding FirstButtonStyle}"
@@ -191,28 +206,6 @@
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                     Content="&#xE76B;"/>
                         </StackPanel>
-                      <!-- Buttons for VerticalPips display !-->
-                 <!--    <StackPanel Grid.Column="1" Orientation="Vertical">
-                            <Button x:Name="FirstPagePipButton"
-                                    ToolTipService.ToolTip="{Binding ElementName=FirstPagePipButton, Path=(AutomationProperties.Name)}"
-                                    Style="{TemplateBinding FirstButtonStyle}"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    Content="&#xE892;"
-                                    RenderTransformOrigin="0.5, 0.5"
-                                    Visibility="Collapsed">
-                                <Button.RenderTransform>
-                                    <RotateTransform Angle="90"/>
-                                </Button.RenderTransform>
-                            </Button>
-                            <Button x:Name="PreviousPagePipButton"
-                                    ToolTipService.ToolTip="{Binding ElementName=PreviousPagePipButton, Path=(AutomationProperties.Name)}"
-                                    Style="{TemplateBinding PreviousButtonStyle}"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    Content="&#xE70E;"
-                                    Visibility="Collapsed"/>
-                        </StackPanel> -->
-                        
-
 
                         <StackPanel x:Name="BoxPanels" Visibility="Collapsed" Orientation="Horizontal" Grid.Column="1">
                             <TextBlock Text="{TemplateBinding PrefixText}" VerticalAlignment="Center" Margin="5,0,5,0"/>
@@ -228,28 +221,23 @@
                             <TextBlock x:Name="TotalNumberOfPagesLabel" VerticalAlignment="Center" Margin="5,0,5,0"
                                     Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=NumberOfPages, Mode=OneWay}" />
                         </StackPanel>
-                        <!--<ScrollViewer MaxHeight="100" VerticalScrollMode="Disabled">
-                            <muxc:ItemsRepeater x:Name="NumberPanelItemsRepeater"
-                                ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.NumberPanelItems}"
-                                Grid.Column="1" Visibility="Collapsed"/>
-                        </ScrollViewer> -->
+                        
                         <muxc:ItemsRepeater x:Name="NumberPanelItemsRepeater"
                                 ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.NumberPanelItems}"
                                 Grid.Column="1" Visibility="Collapsed">
                             <muxc:ItemsRepeater.Layout>
-                                <muxc:StackLayout Orientation="Horizontal" Spacing="5"/>
+                                <muxc:StackLayout Orientation="Horizontal" Spacing="5" />
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
-                        
-                        <muxc:ItemsRepeater x:Name="VerticalPipsItemsRepeater"
-                                ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.VerticalPipsItems}"
-                                Visibility="Collapsed" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="1">
-                             <muxc:ItemsRepeater.Layout>
-                                <muxc:StackLayout Orientation="Vertical" Spacing="5"/>
-                            </muxc:ItemsRepeater.Layout>
-                        </muxc:ItemsRepeater>
-                        
 
+                        <ScrollViewer x:Name="VerticalPipsScrollViewer" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" HorizontalContentAlignment="Center"
+                                      VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled">
+                            <muxc:ItemsRepeater x:Name="VerticalPipsItemsRepeater"
+                                ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.VerticalPipsItems}"
+                                Visibility="Collapsed" >
+                            </muxc:ItemsRepeater>
+                        </ScrollViewer>
+                        
                         <Rectangle x:Name="NumberPanelCurrentPageIndicator" HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Column="1"
                                 Visibility="Collapsed" Fill="{ThemeResource PagerControlSelectionIndicatorForeground}" RadiusX="1" RadiusY="1" Height="2">
                             <Rectangle.Transitions>
@@ -258,10 +246,9 @@
                                 </TransitionCollection>
                             </Rectangle.Transitions>
                         </Rectangle>
-
-
+                        
                         <!-- Buttons for ComboBox, ButtonPanel, NumberBox displays !-->
-                        <StackPanel Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Left">
+                        <StackPanel x:Name="LastAndNextButtonPanel" Orientation="Horizontal" Grid.Column="2" HorizontalAlignment="Left">
                             <Button x:Name="NextPageButton"
                                 ToolTipService.ToolTip="{Binding ElementName=NextPageButton, Path=(AutomationProperties.Name)}"
                                 Style="{TemplateBinding NextButtonStyle}"
@@ -273,27 +260,6 @@
                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
                                 Content="&#xE893;"/>
                         </StackPanel>
-
-                        <!-- Buttons for VerticalPips display -->
-                      <!--  <StackPanel Orientation="Vertical"  Grid.Column="1" Grid.Row="2">
-                            <Button x:Name="NextPagePipButton"
-                                ToolTipService.ToolTip="{Binding ElementName=NextPagePipButton, Path=(AutomationProperties.Name)}"
-                                Style="{TemplateBinding NextButtonStyle}"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                Content="&#xE70D;"
-                                Visibility="Collapsed"/>
-                            <Button x:Name="LastPagePipButton"
-                                ToolTipService.ToolTip="{Binding ElementName=LastPagePipButton, Path=(AutomationProperties.Name)}"
-                                Style="{TemplateBinding LastButtonStyle}"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                Content="&#xE893;"
-                                RenderTransformOrigin="0.5, 0.5"
-                                Visibility="Collapsed">
-                                <Button.RenderTransform>
-                                    <RotateTransform Angle="90"/>
-                                </Button.RenderTransform> 
-                            </Button>
-                        </StackPanel> -->
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

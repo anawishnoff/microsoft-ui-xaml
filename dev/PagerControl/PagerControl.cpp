@@ -54,19 +54,12 @@ constexpr auto c_previousPageButtonName = L"PreviousPageButton"sv;
 constexpr auto c_nextPageButtonName = L"NextPageButton"sv;
 constexpr auto c_lastPageButtonName = L"LastPageButton"sv;
 
-// VerticalPips buttons name
-
-constexpr auto c_firstPagePipButtonName = L"FirstPagePipButton"sv;
-constexpr auto c_previousPagePipButtonName = L"PreviousPagePipButton"sv;
-constexpr auto c_lastPagePipButtonName = L"LastPagePipButton"sv;
-constexpr auto c_nextPagePipButtonName = L"NextPagePipButton"sv;
+constexpr auto c_verticalPipsRepeaterName = L"VerticalPipsItemsRepeater"sv;
+constexpr auto c_verticalPipsScrollViewerName = L"VerticalPipsScrollViewer"sv;
 
 static constexpr auto c_numberPanelButtonStyleName = L"PagerControlNumberPanelButtonStyle"sv;
-static constexpr auto c_verticalPipsNotSelectedButtonStyleName = L"NotSelectedPipButtonStyle"sv;
-//static constexpr auto c_verticalPipsSelectedButtonStyleName = L"SelectedPipButtonStyle"sv;
-static constexpr auto c_verticalPipsCentralSelectedButtonStyle = L"CentralSelectedPipButtonStyle"sv;
-static constexpr auto c_verticalPipsDistanceOneSelectedButtonStyle = L"DistanceOneSelectedPipButtonStyle"sv;
-static constexpr auto c_verticalPipsDistanceTwoSelectedButtonStyle = L"DistanceTwoSelectedPipButtonStyle"sv;
+static constexpr auto c_verticalPipsButtonHeightPropertyName = L"PagerControlVerticalPipButtonHeight"sv;
+static constexpr auto c_verticalPipsButtonStyleName = L"PagerControlVerticalPipButtonStyle"sv;
 
 const int c_AutoDisplayModeNumberOfPagesThreshold = 10; // This integer determines when to switch between NumberBoxDisplayMode and ComboBoxDisplayMode 
 const int c_infiniteModeComboBoxItemsIncrement = 100;
@@ -98,11 +91,7 @@ PagerControl::~PagerControl()
     m_nextPageButtonClickRevoker.revoke();
     m_lastPageButtonClickRevoker.revoke();
 
-    // Vertical pips revoke
-    m_firstPagePipButtonClickRevoker.revoke();
-    m_previousPagePipButtonClickRevoker.revoke();
-    m_nextPagePipButtonClickRevoker.revoke();
-    m_lastPagePipButtonClickRevoker.revoke();
+    m_verticalPipsRepeaterRevoker.revoke();
 }
 
 void PagerControl::OnApplyTemplate()
@@ -142,32 +131,6 @@ void PagerControl::OnApplyTemplate()
         m_lastPageButtonClickRevoker = lastPageButton.Click(winrt::auto_revoke, { this, &PagerControl::LastButtonClicked });
     }
 
-    // VerticalPips Buttons
-
-    if (const auto firstPagePipButton = GetTemplateChildT<winrt::Button>(c_firstPagePipButtonName, *this))
-    {
-        winrt::AutomationProperties::SetName(firstPagePipButton, ResourceAccessor::GetLocalizedStringResource(SR_PagerControlFirstPageButtonTextName));
-        m_firstPagePipButtonClickRevoker = firstPagePipButton.Click(winrt::auto_revoke, { this, &PagerControl::FirstButtonClicked });
-    }
-
-    if (const auto previousPagePipButton = GetTemplateChildT<winrt::Button>(c_previousPagePipButtonName, *this))
-    {
-        winrt::AutomationProperties::SetName(previousPagePipButton, ResourceAccessor::GetLocalizedStringResource(SR_PagerControlPreviousPageButtonTextName));
-        m_previousPagePipButtonClickRevoker = previousPagePipButton.Click(winrt::auto_revoke, { this, &PagerControl::PreviousButtonClicked });
-    }
-
-    if (const auto lastPagePipButton = GetTemplateChildT<winrt::Button>(c_lastPagePipButtonName, *this))
-    {
-        winrt::AutomationProperties::SetName(lastPagePipButton, ResourceAccessor::GetLocalizedStringResource(SR_PagerControlLastPageButtonTextName));
-        m_lastPagePipButtonClickRevoker = lastPagePipButton.Click(winrt::auto_revoke, { this, &PagerControl::LastButtonClicked });
-    }
-
-    if (const auto nextPagePipButton = GetTemplateChildT<winrt::Button>(c_nextPagePipButtonName, *this))
-    {
-        winrt::AutomationProperties::SetName(nextPagePipButton, ResourceAccessor::GetLocalizedStringResource(SR_PagerControlNextPageButtonTextName));
-        m_nextPagePipButtonClickRevoker = nextPagePipButton.Click(winrt::auto_revoke, { this, &PagerControl::NextButtonClicked });
-    }
-
     m_comboBoxSelectionChangedRevoker.revoke();
     [this](const winrt::ComboBox comboBox) {
         m_comboBox.set(comboBox);
@@ -190,15 +153,72 @@ void PagerControl::OnApplyTemplate()
         }
     }(GetTemplateChildT<winrt::NumberBox>(c_numberBoxName, *this));
 
+    m_verticalPipsRepeaterRevoker.revoke();
+    [this](const winrt::ItemsRepeater repeater) {
+        m_verticalPipsRepeater.set(repeater);
+        if (repeater) {
+            //repeater.SetValue
+            //m_verticalPipsRepeaterRevoker = repeater.ElementPrepared(winrt::auto_revoke, { this, &PagerControl::OnElementPrepared });
+            m_verticalPipsRepeaterRevoker = repeater.Loaded(winrt::auto_revoke, { this, &PagerControl::RepeaterLoaded });
+         }
+    }(GetTemplateChildT<winrt::ItemsRepeater>(c_verticalPipsRepeaterName, *this));
+
+
     m_numberPanelRepeater.set(GetTemplateChildT<winrt::ItemsRepeater>(c_numberPanelRepeaterName, *this));
     m_selectedPageIndicator.set(GetTemplateChildT<winrt::FrameworkElement>(c_numberPanelIndicatorName, *this));
-
+    m_verticalPipsScrollViewer.set(GetTemplateChildT<winrt::FxScrollViewer>(c_verticalPipsScrollViewerName, *this));
+    //m_verticalPipsRepeater.set(GetTemplateChildT<winrt::ItemsRepeater>(c_verticalPipsRepeaterName, *this));
+    
     // This is for the initial loading of the control
     OnDisplayModeChanged();
     UpdateOnEdgeButtonVisualStates();
     OnNumberOfPagesChanged(0);
-    //m_lastSelectedPipIndex = -1;
     OnSelectedPageIndexChange(-1);
+}
+
+void PagerControl::RepeaterLoaded(const winrt::IInspectable& sender, const winrt::RoutedEventArgs& args) {
+    if (m_verticalPipsElements.Size() > 0) {
+        MovePipIdentifierToElement(SelectedPageIndex());
+    }
+}
+
+//void PagerControl::OnElementPrepared(winrt::ItemsRepeater sender, winrt::ItemsRepeaterElementPreparedEventArgs args)
+//{
+ //   MovePipIdentifierToElement(SelectedPageIndex());
+   // args.Element().Measure(winrt::Size(INFINITY, INFINITY));
+    //winrt::Size const buttonSize = args.Element().DesiredSize();
+    //auto const desiredHeight = buttonSize.Height * (std::min(m_maxDisplayNumberOfPips, NumberOfPages()));
+    /*if (desiredHeight != scrollViewerHeight) {
+        scrollViewerHeight = desiredHeight;
+        m_verticalPipsScrollViewer.get().MaxHeight(desiredHeight);
+        m_verticalPipsScrollViewer.get().UpdateLayout();
+    }*/
+    //auto item = winrt::ElementCompositionPreview::GetElementVisual(args.Element());
+    //auto svVisual = winrt::ElementCompositionPreview::GetElementVisual(m_verticalPipsScrollViewer.get());
+    //auto scrollProperties = winrt::ElementCompositionPreview::GetScrollViewerManipulationPropertySet(m_verticalPipsScrollViewer.get());
+    
+    //auto scaleExpresion = scrollProperties.Compositor().CreateExpressionAnimation();
+  // scaleExpresion.SetReferenceParameter(L"svVisual", svVisual);
+   // scaleExpresion.SetReferenceParameter(L"scrollProperties", scrollProperties);
+  //  scaleExpresion.SetReferenceParameter(L"item", item);
+
+    // scale the item based on the distance of the item relative to the center of the viewport.
+   // scaleExpresion.Expression(L"1 - abs((svVisual.Size.Y/2 - scrollProperties.Translation.Y) - (item.Offset.Y + item.Size.Y/2))*(.25/(svVisual.Size.Y/2))");
+  //  item.StartAnimation(L"Scale.X", scaleExpresion);
+   // item.StartAnimation(L"Scale.Y", scaleExpresion);
+
+  //  auto centerPointExpression = scrollProperties.Compositor().CreateExpressionAnimation();
+    //centerPointExpression.SetReferenceParameter(L"item", item);
+   // centerPointExpression.Expression(L"Vector3(item.Size.X/2, item.Size.Y/2, 0)");
+   // item.StartAnimation(L"CenterPoint", centerPointExpression);
+//}
+
+void PagerControl::ScrollToCenterOfViewport(winrt::UIElement sender)
+{
+    winrt::BringIntoViewOptions options;
+    options.VerticalAlignmentRatio(0.5);
+    options.AnimationDesired(true);
+    sender.StartBringIntoView(options);
 }
 
 void PagerControl::OnPropertyChanged(const winrt::DependencyPropertyChangedEventArgs& args)
@@ -337,9 +357,6 @@ void PagerControl::OnNumberOfPagesChanged(const int oldValue)
         }
     }
     UpdateOnEdgeButtonVisualStates();
-
-    // TODO: Remove this line as number of pages is set in the constructor
-  
 }
 
 void PagerControl::OnSelectedPageIndexChange(const int oldValue)
@@ -357,7 +374,6 @@ void PagerControl::OnSelectedPageIndexChange(const int oldValue)
     }
     // Now handle the value changes
     m_lastSelectedPageIndex = oldValue;
-    m_lastSelectedPipIndex = oldValue < 0 ? oldValue : m_lastSelectedPipIndex;
 
     if (const auto comboBox = m_comboBox.get())
     {
@@ -751,94 +767,65 @@ void PagerControl::MoveIdentifierToElement(int index)
     }
 }
 
-winrt::Style PagerControl::getPipStyleBasedOnOffset(int offset) {
-    auto style = c_verticalPipsCentralSelectedButtonStyle;
-    switch (offset) {
-        case 0:
-            style = c_verticalPipsCentralSelectedButtonStyle;
-            break;
-        case 1:
-            style = c_verticalPipsDistanceOneSelectedButtonStyle;
-            break;
-        case 2:
-            style = c_verticalPipsDistanceTwoSelectedButtonStyle;
-            break;
-        default:
-            style = c_verticalPipsDistanceTwoSelectedButtonStyle;
+
+void PagerControl::MovePipIdentifierToElement(int index) {
+
+
+    if (const auto repeater = m_verticalPipsRepeater.get())
+    {
+        repeater.UpdateLayout();
+        if (m_lastSelectedPageIndex >= 0) {
+            if (const auto element = m_verticalPipsElements.GetAt(m_lastSelectedPageIndex).try_as<winrt::Button>()) {
+                //element.Style(unbox_value<winrt::Style>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsNotSelectedButtonStyleName))));
+                winrt::VisualStateManager::GoToState(element, L"Unselected", true);
+            }
+        }
+        if (index >= 0) {
+            if (const auto element = m_verticalPipsElements.GetAt(index).try_as<winrt::Button>()) {
+                //element.Style(unbox_value<winrt::Style>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsSelectedButtonStyleName))));
+                winrt::VisualStateManager::GoToState(element, L"Selected", true);
+                ScrollToCenterOfViewport(element);
+
+            }
+        }
     }
-    return unbox_value<winrt::Style>(ResourceAccessor::ResourceLookup(*this, box_value(style)));
+    
 }
 
-int PagerControl::getSelectedPipIndexBasedOnPageIndex(int index) {
-    int newPipIndex = m_lastSelectedPipIndex;
-    while (index > m_lastSelectedPageIndex && newPipIndex < m_maxNumberOfPips - 1) {
-        index--;
-        newPipIndex++;
-    }
-    while (index < m_lastSelectedPageIndex && newPipIndex > 0) {
-        index++;
-        newPipIndex--;
-    }
-    return newPipIndex;
+void PagerControl::setVerticalPipsSVMaxSize() {
+    auto pipHeight = unbox_value<double>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsButtonHeightPropertyName)));
+    auto scrollViewerHeight = pipHeight * std::min(NumberOfPages(), m_maxDisplayNumberOfPips);
+    m_verticalPipsScrollViewer.get().MaxHeight(scrollViewerHeight);
 }
-
-void PagerControl::MovePipIdentifierToElement(int index)
-{
-    int newPipIndex = getSelectedPipIndexBasedOnPageIndex(index);
-    if (const auto element = m_verticalPipsElements.GetAt(newPipIndex).try_as<winrt::Button>()) {
-        element.Style(unbox_value<winrt::Style>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsCentralSelectedButtonStyle))));
-    }
-    m_lastSelectedPipIndex = newPipIndex;
-}
-
-
 
 void PagerControl::UpdateVerticalPips(const int numberOfPages) {
 
- 
-
-    int index = SelectedPageIndex();
-    int offSet = 0;
-    if (index - 2 >= 0 && index + 2 < numberOfPages) {
-        index = 2;
-    }
-    else if (index + 1 >= m_maxNumberOfPips) {
-        offSet = index - 2;
-    }
-    //if (index != m_lastSelectedPipIndex) {
+    auto const pipsListSize = static_cast<int>(m_verticalPipsElements.Size());
+    if (numberOfPages != pipsListSize) {
         m_verticalPipsElements.Clear();
-
-
-        for (int i = index - 2; i < numberOfPages && i < index + 3; i++)
-        {
-            if (i >= 0) {
-                AppendButtonToVerticalPipsList(i - offSet, numberOfPages, index - offSet);
-            }
-
-
+        for (int i = 0; i < numberOfPages; i++) {
+           AppendButtonToVerticalPipsList(i + 1, numberOfPages);
         }
-        //MovePipIdentifierToElement(index);
-        m_lastSelectedPipIndex = index - offSet;
-    //}
+        setVerticalPipsSVMaxSize();
+    }
+    MovePipIdentifierToElement(SelectedPageIndex());
 }
 
-void PagerControl::AppendButtonToVerticalPipsList(const int pipIndex, const int numberOfPages, const int selectedPipIndex) {
+void PagerControl::AppendButtonToVerticalPipsList(const int pageNumber, const int numberOfPages) {
     winrt::Button button;
-    button.Tag(winrt::box_value(pipIndex));
-    button.Style(getPipStyleBasedOnOffset(abs(selectedPipIndex - pipIndex)));
+    button.Tag(winrt::box_value(pageNumber));
     const auto buttonClickedFunc = [this](auto const& sender, auto const& args) {
         if (const auto button = sender.try_as<winrt::Button>())
         {
-           const int unboxedValue = winrt::unbox_value<int>(button.Tag());
-            if (unboxedValue != m_lastSelectedPipIndex) {
-                SelectedPageIndex(SelectedPageIndex() + unboxedValue - m_lastSelectedPipIndex);
-            }
-
+           SelectedPageIndex(winrt::unbox_value<int>(button.Tag()) - 1);
         }
     };
     button.Click(buttonClickedFunc);
+    button.Style(unbox_value<winrt::Style>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsButtonStyleName))));
+    winrt::AutomationProperties::SetName(button, ResourceAccessor::GetLocalizedStringResource(SR_PagerControlPageTextName) + L" " + winrt::to_hstring(pageNumber));
+    winrt::AutomationProperties::SetPositionInSet(button, pageNumber);
+    winrt::AutomationProperties::SetSizeOfSet(button, numberOfPages);
     m_verticalPipsElements.Append(button);
-
 }
 
 

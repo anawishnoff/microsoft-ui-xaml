@@ -26,7 +26,7 @@ namespace MUXControlsTestApp
         public PagerControlPage()
         {
             this.InitializeComponent();
-            this.Loaded += OnLoad;
+            //this.Loaded += OnLoad;
         }
 
         private void OnLoad(object sender, RoutedEventArgs args)
@@ -42,12 +42,12 @@ namespace MUXControlsTestApp
             firstPageButton = VisualTreeHelper.GetChild(backButtonsPanel, 0) as Button;
             previousPageButton = VisualTreeHelper.GetChild(backButtonsPanel, 1) as Button;
 
-            var boxPanels = VisualTreeHelper.GetChild(rootGrid, 2);
+            var boxPanels = VisualTreeHelper.GetChild(rootGrid, 1);
             pagerNumberBox = VisualTreeHelper.GetChild(boxPanels, 1) as NumberBox;
             pagerComboBox = VisualTreeHelper.GetChild(boxPanels, 2) as ComboBox;
-            pagerItemsRepeater = VisualTreeHelper.GetChild(rootGrid, 3) as ItemsRepeater;
+            pagerItemsRepeater = VisualTreeHelper.GetChild(rootGrid, 2) as ItemsRepeater;
 
-            var forwardButtonsPanel = VisualTreeHelper.GetChild(rootGrid, 7);
+            var forwardButtonsPanel = VisualTreeHelper.GetChild(rootGrid, 4);
             nextPageButton = VisualTreeHelper.GetChild(forwardButtonsPanel, 0) as Button;
             lastPageButton = VisualTreeHelper.GetChild(forwardButtonsPanel, 1) as Button;
 
@@ -167,11 +167,6 @@ namespace MUXControlsTestApp
             {
                 TestPager.DisplayMode = PagerControlDisplayMode.ButtonPanel;
                 CustomizedPager.DisplayMode = PagerControlDisplayMode.ButtonPanel;
-            }
-            else if (item == this.VerticalPipsDisplayModeItem)
-            {
-                TestPager.DisplayMode = PagerControlDisplayMode.VerticalPips;
-                CustomizedPager.DisplayMode = PagerControlDisplayMode.VerticalPips;
             }
 
             NumberBoxVisibilityCheckBox.IsChecked = pagerNumberBox?.Visibility == Visibility.Visible;

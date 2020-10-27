@@ -47,12 +47,12 @@ private:
 
     /* VerticalPips logic */
     void UpdateVerticalPips(const int numberOfPages);
-    void AppendButtonToVerticalPipsList(const int pipIndex, const int numberOfPages, const int selectedPipIndex);
+    void AppendButtonToVerticalPipsList(const int pageNumber, const int numberOfPages);
     void MovePipIdentifierToElement(int index);
-    int getSelectedPipIndexBasedOnPageIndex(int index);
-    winrt::Style getPipStyleBasedOnOffset(int offset);
-    int m_lastSelectedPipIndex = -1;
-    int m_maxNumberOfPips = 5;
+    //void OnElementPrepared(winrt::ItemsRepeater sender, winrt::ItemsRepeaterElementPreparedEventArgs args);
+    void setVerticalPipsSVMaxSize();
+    void RepeaterLoaded(const winrt::IInspectable& sender, const winrt::RoutedEventArgs& args);
+    void ScrollToCenterOfViewport(winrt::UIElement sender);
 
     /* NumberPanel logic */
     void UpdateNumberPanel(const int numberOfPages);
@@ -77,11 +77,14 @@ private:
 
     int m_lastSelectedPageIndex = -1;
     int m_lastNumberOfPagesCount = 0;
+    int m_maxDisplayNumberOfPips = 10;
 
     tracker_ref<winrt::ComboBox> m_comboBox{ this };
     tracker_ref<winrt::NumberBox> m_numberBox{ this };
     tracker_ref<winrt::ItemsRepeater> m_numberPanelRepeater{ this };
     tracker_ref<winrt::FrameworkElement> m_selectedPageIndicator{ this };
+    tracker_ref<winrt::ItemsRepeater> m_verticalPipsRepeater{ this };
+    tracker_ref<winrt::FxScrollViewer> m_verticalPipsScrollViewer{ this };
 
     winrt::FrameworkElement::KeyDown_revoker m_rootGridKeyDownRevoker{};
     winrt::ComboBox::SelectionChanged_revoker m_comboBoxSelectionChangedRevoker{};
@@ -90,11 +93,8 @@ private:
     winrt::Button::Click_revoker m_previousPageButtonClickRevoker{};
     winrt::Button::Click_revoker m_nextPageButtonClickRevoker{};
     winrt::Button::Click_revoker m_lastPageButtonClickRevoker{};
-    // Vertical Pips revokers
-    winrt::Button::Click_revoker m_firstPagePipButtonClickRevoker{};
-    winrt::Button::Click_revoker m_previousPagePipButtonClickRevoker{};
-    winrt::Button::Click_revoker m_nextPagePipButtonClickRevoker{};
-    winrt::Button::Click_revoker m_lastPagePipButtonClickRevoker{};
+    winrt::ItemsRepeater::Loaded_revoker m_verticalPipsRepeaterRevoker{};
+
 
     winrt::IObservableVector<IInspectable> m_comboBoxEntries{};
     winrt::IObservableVector<IInspectable> m_numberPanelElements{};
