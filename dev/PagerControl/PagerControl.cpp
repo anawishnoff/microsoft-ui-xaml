@@ -774,19 +774,15 @@ void PagerControl::MovePipIdentifierToElement(int index) {
     if (const auto repeater = m_verticalPipsRepeater.get())
     {
         repeater.UpdateLayout();
-        if (m_lastSelectedPageIndex >= 0) {
-            if (const auto element = m_verticalPipsElements.GetAt(m_lastSelectedPageIndex).try_as<winrt::Button>()) {
-                //element.Style(unbox_value<winrt::Style>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsNotSelectedButtonStyleName))));
-                winrt::VisualStateManager::GoToState(element, L"Unselected", true);
-            }
+        if (const auto element = repeater.TryGetElement(m_lastSelectedPageIndex).try_as<winrt::Button>()) {
+            //element.Style(unbox_value<winrt::Style>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsNotSelectedButtonStyleName))));
+            winrt::VisualStateManager::GoToState(element, L"Unselected", true);
         }
-        if (index >= 0) {
-            if (const auto element = m_verticalPipsElements.GetAt(index).try_as<winrt::Button>()) {
-                //element.Style(unbox_value<winrt::Style>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsSelectedButtonStyleName))));
-                winrt::VisualStateManager::GoToState(element, L"Selected", true);
-                ScrollToCenterOfViewport(element);
-
-            }
+        
+        if (const auto element = repeater.TryGetElement(index).try_as<winrt::Button>()) {
+            //element.Style(unbox_value<winrt::Style>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsSelectedButtonStyleName))));
+            winrt::VisualStateManager::GoToState(element, L"Selected", true);
+            ScrollToCenterOfViewport(element);
         }
     }
     
