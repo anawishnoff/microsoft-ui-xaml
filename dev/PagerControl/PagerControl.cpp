@@ -797,13 +797,18 @@ void PagerControl::UpdateVerticalPips(const int numberOfPages, const int maxDisp
     auto const pipsListSize = static_cast<int>(m_verticalPipsElements.Size());
 
     if (numberOfPages != pipsListSize) {
+        // TODO: find a way to clean the pipsElements when switched to infinite mode from a numberOfPages >= 0
+        // TODO: finalize the infinite behavior: do we start with 1 pin or MaxDisplayedPages
         if (numberOfPages < 0) {
-            m_verticalPipsElements.Append(box_value(pipsListSize + 1));
+            auto const startIndex = pipsListSize;
+            auto const endIndex = pipsListSize < maxDisplayedPages ? maxDisplayedPages : pipsListSize + 1;
+            for (int i = startIndex; i < endIndex; i++) {
+                m_verticalPipsElements.Append(box_value(i + 1));
+            }
         }
         else {
             m_verticalPipsElements.Clear();
             for (int i = 0; i < numberOfPages; i++) {
-                //AppendButtonToVerticalPipsList(i + 1, numberOfPages);
                 m_verticalPipsElements.Append(box_value(i + 1));
             }
         }
