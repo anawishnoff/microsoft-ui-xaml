@@ -203,6 +203,10 @@ namespace MUXControlsTestApp
             {
                 numOfPages = 12;
             }
+            else if(item == FifteenPages)
+            {
+                numOfPages = 15;
+            }
             TestPager.MaxDisplayedPages = numOfPages;
             CustomizedPager.MaxDisplayedPages = numOfPages;
         }
