@@ -8,6 +8,8 @@ using Windows.UI.Xaml.Media;
 using System.Collections.ObjectModel;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Specialized;
+using System.Linq;
+using System;
 
 namespace MUXControlsTestApp
 {
@@ -26,11 +28,12 @@ namespace MUXControlsTestApp
         public PagerControlPage()
         {
             this.InitializeComponent();
-            //this.Loaded += OnLoad;
+            this.Loaded += OnLoad;
         }
 
         private void OnLoad(object sender, RoutedEventArgs args)
         {
+            PagerDisplayMaxPagesDisplayed.SelectionChanged += OnMaxPagesDisplayedChanged;
             PagerDisplayModeComboBox.SelectionChanged += OnDisplayModeChanged;
             FirstPageButtonVisibilityComboBox.SelectionChanged += OnFirstButtonVisibilityChanged;
             PreviousPageButtonVisibilityComboBox.SelectionChanged += OnPreviousButtonVisibilityChanged;
@@ -47,7 +50,7 @@ namespace MUXControlsTestApp
             pagerComboBox = VisualTreeHelper.GetChild(boxPanels, 2) as ComboBox;
             pagerItemsRepeater = VisualTreeHelper.GetChild(rootGrid, 2) as ItemsRepeater;
 
-            var forwardButtonsPanel = VisualTreeHelper.GetChild(rootGrid, 4);
+            var forwardButtonsPanel = VisualTreeHelper.GetChild(rootGrid, 5);
             nextPageButton = VisualTreeHelper.GetChild(forwardButtonsPanel, 0) as Button;
             lastPageButton = VisualTreeHelper.GetChild(forwardButtonsPanel, 1) as Button;
 
@@ -146,8 +149,9 @@ namespace MUXControlsTestApp
 
         private void OnDisplayModeChanged(object sender, SelectionChangedEventArgs e)
         {
+            MainPagerStackPanel.Orientation = Orientation.Vertical;
+            CustomizedPager.Margin = new Thickness(0, 50, 0, 0);
             var item = PagerDisplayModeComboBox.SelectedItem;
-
             if (item == this.AutoDisplayModeItem)
             {
                 TestPager.DisplayMode = PagerControlDisplayMode.Auto;
@@ -167,6 +171,13 @@ namespace MUXControlsTestApp
             {
                 TestPager.DisplayMode = PagerControlDisplayMode.ButtonPanel;
                 CustomizedPager.DisplayMode = PagerControlDisplayMode.ButtonPanel;
+            } 
+            else if (item == this.VerticalPipsDisplayModeItem)
+            {
+                MainPagerStackPanel.Orientation = Orientation.Horizontal;
+                CustomizedPager.Margin = new Thickness(50,0,0,0);
+                TestPager.DisplayMode = PagerControlDisplayMode.VerticalPips;
+                CustomizedPager.DisplayMode = PagerControlDisplayMode.VerticalPips;
             }
 
             NumberBoxVisibilityCheckBox.IsChecked = pagerNumberBox?.Visibility == Visibility.Visible;
@@ -175,6 +186,27 @@ namespace MUXControlsTestApp
             NumberBoxIsEnabledCheckBox.IsChecked = pagerNumberBox?.IsEnabled;
             ComboBoxIsEnabledCheckBox.IsChecked = pagerComboBox?.IsEnabled;
         }
+
+        private void OnMaxPagesDisplayedChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var item = PagerDisplayMaxPagesDisplayed.SelectedItem;
+            int numOfPages = 5;
+            if(item == SevenPages)
+            {
+                numOfPages = 7;
+            }
+            else if(item == NinePages)
+            {
+                numOfPages = 9;
+            }
+            else if(item == TwelvePages)
+            {
+                numOfPages = 12;
+            }
+            TestPager.MaxDisplayedPages = numOfPages;
+            CustomizedPager.MaxDisplayedPages = numOfPages;
+        }
+
 
         private void OnFirstButtonVisibilityChanged(object sender, SelectionChangedEventArgs e)
         {
