@@ -49,7 +49,7 @@ private:
     void UpdateVerticalPips(const int numberOfPages);
     void AppendButtonToVerticalPipsList(const int pageNumber, const int numberOfPages);
     void MovePipIdentifierToElement(int index);
-    //void OnElementPrepared(winrt::ItemsRepeater sender, winrt::ItemsRepeaterElementPreparedEventArgs args);
+    void OnElementPrepared(winrt::ItemsRepeater sender, winrt::ItemsRepeaterElementPreparedEventArgs args);
     void setVerticalPipsSVMaxSize();
     void RepeaterLoaded(const winrt::IInspectable& sender, const winrt::RoutedEventArgs& args);
     void ScrollToCenterOfViewport(winrt::UIElement sender);
@@ -77,6 +77,7 @@ private:
 
     int m_lastSelectedPageIndex = -1;
     int m_lastNumberOfPagesCount = 0;
+    // TODO: provide constructor for it
     int m_maxDisplayNumberOfPips = 10;
 
     tracker_ref<winrt::ComboBox> m_comboBox{ this };

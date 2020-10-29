@@ -229,12 +229,21 @@
                                 <muxc:StackLayout Orientation="Horizontal" Spacing="5" />
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
-
+                        <!-- Make SV Collapsed by default -->
                         <ScrollViewer x:Name="VerticalPipsScrollViewer" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" HorizontalContentAlignment="Center"
                                       VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Disabled">
+                           <!-- <muxc:ItemsRepeater x:Name="VerticalPipsItemsRepeater"
+                                ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.VerticalPipsItems}"
+                                Visibility="Collapsed" >
+                            </muxc:ItemsRepeater> -->
                             <muxc:ItemsRepeater x:Name="VerticalPipsItemsRepeater"
                                 ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.VerticalPipsItems}"
                                 Visibility="Collapsed" >
+                                <muxc:ItemsRepeater.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource PagerControlVerticalPipButtonStyle}" Tag="{Binding}"/>
+                                    </DataTemplate>
+                                </muxc:ItemsRepeater.ItemTemplate>
                             </muxc:ItemsRepeater>
                         </ScrollViewer>
                         
