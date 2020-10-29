@@ -29,11 +29,13 @@ public:
     void UpdateDisplayModeAutoState();
     void OnNumberOfPagesChanged(const int oldValue);
     void OnSelectedPageIndexChange(const int oldValue);
+    void OnMaxDisplayedPagesChanged(const int oldValue);
     void OnButtonVisibilityChanged(const winrt::PagerControlButtonVisibility visibility,
         const wstring_view visibleStateName,
         const wstring_view collapsedStateName,
         const wstring_view hiddenStateName,
         const int hiddenOnEdgePageCriteria);
+
 
 private:
 
@@ -46,7 +48,7 @@ private:
     void RaiseSelectedIndexChanged();
 
     /* VerticalPips logic */
-    void UpdateVerticalPips(const int numberOfPages);
+    void UpdateVerticalPips(const int numberOfPages, const int maxDisplayedPages);
     void AppendButtonToVerticalPipsList(const int pageNumber, const int numberOfPages);
     void MovePipIdentifierToElement(int index);
     void OnElementPrepared(winrt::ItemsRepeater sender, winrt::ItemsRepeaterElementPreparedEventArgs args);
@@ -78,7 +80,7 @@ private:
     int m_lastSelectedPageIndex = -1;
     int m_lastNumberOfPagesCount = 0;
     // TODO: provide constructor for it
-    int m_maxDisplayNumberOfPips = 10;
+    int m_lastMaxDisplayedPages = 0;
 
     tracker_ref<winrt::ComboBox> m_comboBox{ this };
     tracker_ref<winrt::NumberBox> m_numberBox{ this };

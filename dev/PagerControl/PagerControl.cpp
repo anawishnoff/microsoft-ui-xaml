@@ -136,6 +136,7 @@ void PagerControl::OnApplyTemplate()
         m_comboBox.set(comboBox);
         if (comboBox)
         {
+            
             comboBox.SelectedIndex(SelectedPageIndex() - 1);
             winrt::AutomationProperties::SetName(comboBox, ResourceAccessor::GetLocalizedStringResource(SR_PagerControlPageTextName));
             m_comboBoxSelectionChangedRevoker = comboBox.SelectionChanged(winrt::auto_revoke, { this, &PagerControl::ComboBoxSelectionChanged });
@@ -193,7 +194,6 @@ void PagerControl::OnElementPrepared(winrt::ItemsRepeater sender, winrt::ItemsRe
         const auto buttonClickedFunc = [this](auto const& sender, auto const& args) {
             if (const auto button = sender.try_as<winrt::Button>())
             {
-                
                 SelectedPageIndex(winrt::unbox_value<int>(button.Tag()) - 1);
             }
         };
@@ -266,7 +266,15 @@ void PagerControl::OnPropertyChanged(const winrt::DependencyPropertyChangedEvent
         {
             UpdateNumberPanel(NumberOfPages());
         }
+        else if (property == MaxDisplayedPagesProperty()) {
+            OnMaxDisplayedPagesChanged(winrt::unbox_value<int>(args.OldValue()));
+        }
     }
+}
+
+void PagerControl::OnMaxDisplayedPagesChanged(const int oldValue) {
+    m_lastMaxDisplayedPages = oldValue;
+    UpdateTemplateSettingElementLists();
 }
 
 winrt::AutomationPeer PagerControl::OnCreateAutomationPeer()
@@ -455,7 +463,7 @@ void PagerControl::UpdateTemplateSettingElementLists()
         UpdateNumberPanel(numberOfPages);
     }
     else if (displayMode == winrt::PagerControlDisplayMode::VerticalPips) {
-        UpdateVerticalPips(numberOfPages);
+        UpdateVerticalPips(numberOfPages, MaxDisplayedPages());
     }
 }
 
@@ -779,34 +787,31 @@ void PagerControl::setVerticalPipsSVMaxSize() {
 
 void PagerControl::setVerticalPipsSVMaxSize() {
     auto pipHeight = unbox_value<double>(ResourceAccessor::ResourceLookup(*this, box_value(c_verticalPipsButtonHeightPropertyName)));
-    auto numberOfPages = NumberOfPages() < 0 ? m_maxDisplayNumberOfPips : std::min(NumberOfPages(), m_maxDisplayNumberOfPips);
+    auto numberOfPages = NumberOfPages() < 0 ? MaxDisplayedPages() : std::min(NumberOfPages(), MaxDisplayedPages());
     auto scrollViewerHeight = pipHeight * numberOfPages;
     m_verticalPipsScrollViewer.get().MaxHeight(scrollViewerHeight);
 }
 
-void PagerControl::UpdateVerticalPips(const int numberOfPages) {
+void PagerControl::UpdateVerticalPips(const int numberOfPages, const int maxDisplayedPages) {
 
     auto const pipsListSize = static_cast<int>(m_verticalPipsElements.Size());
 
     if (numberOfPages != pipsListSize) {
         if (numberOfPages < 0) {
-          /*  if (pipsListSize == 0) {
-                for (int i = 0; i < m_maxDisplayNumberOfPips; i++) {
-                    AppendButtonToVerticalPipsList(i + 1, numberOfPages);
-                }
-            }
-            else {*/
-                AppendButtonToVerticalPipsList(pipsListSize + 1, numberOfPages);
-            //}
+            m_verticalPipsElements.Append(box_value(pipsListSize + 1));
         }
         else {
             m_verticalPipsElements.Clear();
             for (int i = 0; i < numberOfPages; i++) {
-                AppendButtonToVerticalPipsList(i + 1, numberOfPages);
+                //AppendButtonToVerticalPipsList(i + 1, numberOfPages);
+                m_verticalPipsElements.Append(box_value(i + 1));
             }
         }
+    }
+    if (maxDisplayedPages != m_lastMaxDisplayedPages) {
         setVerticalPipsSVMaxSize();
     }
+
     MovePipIdentifierToElement(SelectedPageIndex());
 }
 /*void PagerControl::UpdateVerticalPips(const int numberOfPages) {
